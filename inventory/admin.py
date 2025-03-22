@@ -18,7 +18,7 @@ class ProductAdmin(admin.ModelAdmin):
     )
     list_filter = ("created_at", "updated_at")
     search_fields = ("name", "barcode")
-    ordering = ("name", "created_at")
+    ordering = ("-created_at",)
     readonly_fields = ("stock", "created_at", "updated_at", "created_by", "updated_by")
 
     def save_model(self, request, obj, form, change):
