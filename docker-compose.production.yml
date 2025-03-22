@@ -1,0 +1,83 @@
+volumes:
+  django_modular_production_postgres_data: {}
+  django_modular_production_postgres_data_backups: {}
+  django_modular_production_traefik: {}
+  django_modular_production_django_media: {}
+
+  django_modular_production_redis_data: {}
+
+
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+
+    image: django_modular_production_django
+    volumes:
+      - django_modular_production_django_media:/app/core/media
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+    command: /start
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: django_modular_production_postgres
+    volumes:
+      - django_modular_production_postgres_data:/var/lib/postgresql/data
+      - django_modular_production_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.production/.postgres
+
+  traefik:
+    build:
+      context: .
+      dockerfile: ./compose/production/traefik/Dockerfile
+    image: django_modular_core_production_traefik
+    depends_on:
+      - django
+    volumes:
+      - django_modular_production_traefik:/etc/traefik/acme
+    ports:
+      - '0.0.0.0:80:80'
+      - '0.0.0.0:443:443'
+      - '0.0.0.0:5555:5555'
+
+  redis:
+    image: docker.io/redis:6
+
+    volumes:
+      - django_modular_production_redis_data:/data
+
+
+  celeryworker:
+    <<: *django
+    image: django_modular_production_celeryworker
+    command: /start-celeryworker
+
+  celerybeat:
+    <<: *django
+    image: django_modular_production_celerybeat
+    command: /start-celerybeat
+
+  flower:
+    <<: *django
+    image: django_modular_production_flower
+    command: /start-flower
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./compose/production/nginx/Dockerfile
+    image: django_modular_production_nginx
+    depends_on:
+      - django
+    volumes:
+      - django_modular_production_django_media:/usr/share/nginx/media:ro
