@@ -1,6 +1,7 @@
 # Django Modular Project 🔥
 
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![codecov](https://codecov.io/github/animemoeus/special-pancake/graph/badge.svg?token=nYlXdNE9pW)](https://codecov.io/github/animemoeus/special-pancake)
 
 ## About
 
