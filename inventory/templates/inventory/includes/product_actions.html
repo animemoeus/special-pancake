@@ -12,7 +12,7 @@
     <i class="bi bi-info-circle"></i>
   </button>
 
-  {% if user.is_authenticated %}
+  {% if has_user_role or has_manager_role %}
   <button type="button"
           class="btn btn-outline-success btn-sm"
           data-bs-toggle="modal"
@@ -24,6 +24,9 @@
           data-product-stock="{{ product.stock }}">
     <i class="bi bi-pencil"></i>
   </button>
+  {% endif %}
+
+  {% if has_manager_role  %}
   <button type="button"
           class="btn btn-outline-danger btn-sm"
           data-bs-toggle="modal"

@@ -26,7 +26,7 @@
               <th>Price</th>
               <th>Barcode</th>
               <th>Stock</th>
-              {% if user.is_authenticated %}
+              {% if has_user_role %}
               <th>Actions</th>
               {% endif %}
             </tr>
@@ -38,7 +38,7 @@
                 <td>${{ product.price }}</td>
                 <td>{{ product.barcode }}</td>
                 <td>{{ product.stock }}</td>
-                {% if user.is_authenticated %}
+                {% if has_user_role %}
                 <td>
                   {% include "inventory/includes/product_actions.html" %}
                 </td>

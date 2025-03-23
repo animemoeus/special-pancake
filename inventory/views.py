@@ -17,6 +17,18 @@ class ProductListView(ListView):
     def get_queryset(self):
         return Product.objects.all().order_by("-created_at")
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["has_user_role"] = (
+            self.request.user.groups.filter(name="User").exists()
+            or self.request.user.is_superuser
+        )
+        context["has_manager_role"] = (
+            self.request.user.groups.filter(name="Manager").exists()
+            or self.request.user.is_superuser
+        )
+        return context
+
 
 class ProductCreateView(View):
     """View to handle product creation"""
