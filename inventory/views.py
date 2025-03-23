@@ -55,6 +55,19 @@ class ProductUpdateView(View):
     """View to handle product updates"""
 
     def post(self, request, product_id):
+        # Check if user has User or Manager permissions
+        has_permission = (
+            self.request.user.groups.filter(name__in=["User", "Manager"]).exists()
+            or self.request.user.is_superuser
+        )
+
+        if not has_permission:
+            messages.error(
+                request,
+                "Permission denied: Only users or managers can update products.",
+            )
+            return HttpResponseRedirect(reverse("inventory:product-list"))
+
         product = get_object_or_404(Product, id=product_id)
 
         # Update product fields
@@ -76,6 +89,19 @@ class ProductDeleteView(View):
     """View to handle product deletion"""
 
     def post(self, request, product_id):
+        # Check if user has Manager permissions
+        has_manager_role = (
+            self.request.user.groups.filter(name="Manager").exists()
+            or self.request.user.is_superuser
+        )
+
+        if not has_manager_role:
+            messages.error(
+                request,
+                "Permission denied: Only managers can delete products.",
+            )
+            return HttpResponseRedirect(reverse("inventory:product-list"))
+
         product = get_object_or_404(Product, id=product_id)
         product_name = product.name
 
