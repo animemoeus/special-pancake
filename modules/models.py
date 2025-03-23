@@ -61,14 +61,22 @@ class Module(models.Model):
     def has_unapplied_migrations(self):
         """
         Check if this module has any unapplied migrations.
-        Returns True if there are migrations that need to be applied, False otherWwise.
+        Returns True if there are migrations that need to be applied, False otherwise.
         """
-        loader, applied = self._get_migration_context()
+        # Check if name is empty or not in INSTALLED_APPS before proceeding
+        if not self.name or self.name not in settings.INSTALLED_APPS:
+            return False
 
-        # Check if there are any unapplied migrations for this app
-        app_migrations = [key for key in loader.graph.nodes if key[0] == self.name]
+        try:
+            loader, applied = self._get_migration_context()
 
-        return any(migration not in applied for migration in app_migrations)
+            # Check if there are any unapplied migrations for this app
+            app_migrations = [key for key in loader.graph.nodes if key[0] == self.name]
+
+            return any(migration not in applied for migration in app_migrations)
+        except ImproperlyConfigured:
+            # Handle the case when we can't check migrations
+            return False
 
     def get_unapplied_migrations(self):
         """
