@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container mt-4">
+    <h1 class="mb-4">Available Modules</h1>
+    <div class="row">
+      {% for module in modules %}
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="card h-100 {% if module.is_active %}border-success{% else %}border-secondary{% endif %}">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="card-title mb-0 text-capitalize">{{ module.name }}</h5>
+              {% if module.is_active %}
+                <span class="badge bg-success">Active</span>
+              {% else %}
+                <span class="badge bg-secondary">Inactive</span>
+              {% endif %}
+            </div>
+            <div class="card-body">
+              <p class="card-text">{{ module.description }}</p>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <small class="text-muted">Created: {{ module.created_at|date:"M d, Y" }}</small>
+              </li>
+              <li class="list-group-item">
+                <small class="text-muted">Updated: {{ module.updated_at|date:"M d, Y" }}</small>
+              </li>
+              {% if module.is_upgradable %}
+                <li class="list-group-item">
+                  <span class="badge bg-info">Upgradable</span>
+                </li>
+              {% endif %}
+            </ul>
+            <div class="card-footer text-center">
+              <a href="#" class="btn btn-primary btn-sm">Details</a>
+              <form method="post"
+                    action="{% url 'modules:module-action' module.id %}"
+                    style="display:inline">
+                {% csrf_token %}
+                {% if not module.is_active %}
+                  <input type="hidden" name="action" value="activate" />
+                  <button type="submit" class="btn btn-success btn-sm">Install</button>
+                {% else %}
+                  <!-- Always show upgrade button for active modules -->
+                  <input type="hidden" name="action" value="upgrade" />
+                  <button type="submit"
+                          class="btn btn-warning btn-sm"
+                          {% if not module.is_upgradable %}disabled{% endif %}>Upgrade</button>
+                {% endif %}
+                {% if module.is_active %}
+                  <input type="hidden" name="action" value="deactivate" />
+                  <button type="submit" class="btn btn-danger btn-sm">Uninstall</button>
+                {% endif %}
+              </form>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-12">
+          <div class="alert alert-info">No modules available at this time.</div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock content %}
