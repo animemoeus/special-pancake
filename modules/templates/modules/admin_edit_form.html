@@ -1,0 +1,10 @@
+{% extends 'admin/change_form.html' %}
+
+{% block submit_buttons_bottom %}
+  {{ block.super }}
+  <div class="submit-row">
+    <input type="submit" value="Install" name="_install" />
+    <input type="submit" value="Upgrade" name="_upgrade" />
+    <input type="submit" value="Uninstall" name="_uninstall" />
+  </div>
+{% endblock submit_buttons_bottom %}
