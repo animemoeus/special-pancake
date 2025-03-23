@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+{% endblock extra_css %}
+
+{% block content %}
+  <div class="container mt-4">
+    <h1 class="mb-4">Product Inventory</h1>
+
+    {% if products %}
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Barcode</th>
+              <th>Stock</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for product in products %}
+              <tr>
+                <td>{{ product.name }}</td>
+                <td>${{ product.price }}</td>
+                <td>{{ product.barcode }}</td>
+                <td>{{ product.stock }}</td>
+                <td>
+                  {% include "inventory/includes/product_actions.html" %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      {% if is_paginated %}
+        <nav aria-label="Product pagination">
+          <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page=1">&laquo; First</a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <span class="page-link">&laquo; First</span>
+              </li>
+              <li class="page-item disabled">
+                <span class="page-link">Previous</span>
+              </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+              {% if page_obj.number == num %}
+                <li class="page-item active">
+                  <span class="page-link">{{ num }} <span class="sr-only">(current)</span></span>
+                </li>
+              {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled">
+                <span class="page-link">Next</span>
+              </li>
+              <li class="page-item disabled">
+                <span class="page-link">Last &raquo;</span>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+      {% endif %}
+
+    {% else %}
+      <div class="alert alert-info">No products available at this time.</div>
+    {% endif %}
+  </div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Details Modal
+    const detailsModal = document.getElementById('detailsModal');
+    if (detailsModal) {
+      detailsModal.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+
+        const productName = button.getAttribute('data-product-name');
+        const productPrice = button.getAttribute('data-product-price');
+        const productBarcode = button.getAttribute('data-product-barcode');
+        const productStock = button.getAttribute('data-product-stock');
+
+        document.getElementById('detail-name').textContent = productName;
+        document.getElementById('detail-price').textContent = '$' + productPrice;
+        document.getElementById('detail-barcode').textContent = productBarcode || 'N/A';
+        document.getElementById('detail-stock').textContent = productStock;
+      });
+    }
+
+    // Edit Modal
+    const editModal = document.getElementById('editModal');
+    if (editModal) {
+      editModal.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+
+        const productId = button.getAttribute('data-product-id');
+        const productName = button.getAttribute('data-product-name');
+        const productPrice = button.getAttribute('data-product-price');
+        const productBarcode = button.getAttribute('data-product-barcode');
+        const productStock = button.getAttribute('data-product-stock');
+
+        document.getElementById('edit-product-id').value = productId;
+        document.getElementById('edit-name').value = productName;
+        document.getElementById('edit-price').value = productPrice;
+        document.getElementById('edit-barcode').value = productBarcode || '';
+        document.getElementById('edit-stock').value = productStock;
+
+        const editForm = document.getElementById('editProductForm');
+        editForm.action = editForm.action.replace(/\/0$/, '/' + productId);
+      });
+    }
+
+    // Delete Modal
+    const deleteModal = document.getElementById('deleteModal');
+    if (deleteModal) {
+      deleteModal.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+
+        const productId = button.getAttribute('data-product-id');
+        const productName = button.getAttribute('data-product-name');
+
+        document.getElementById('delete-product-name').textContent = productName;
+        document.getElementById('delete-product-id').value = productId;
+
+        const deleteForm = document.getElementById('deleteProductForm');
+        deleteForm.action = deleteForm.action.replace(/\/0$/, '/' + productId);
+      });
+    }
+  });
+</script>
+{% endblock extra_js %}
