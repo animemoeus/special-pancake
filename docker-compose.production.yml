@@ -68,4 +68,4 @@ services:
     volumes:
       - django_modular_production_django_media:/usr/share/nginx/media:ro
     ports:
-      - 64000:80
+      - 62111:80
