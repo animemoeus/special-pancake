@@ -18,6 +18,27 @@ class ProductListView(ListView):
         return Product.objects.all().order_by("-created_at")
 
 
+class ProductCreateView(View):
+    """View to handle product creation"""
+
+    def post(self, request):
+        try:
+            product = Product(
+                name=request.POST.get("name"),
+                price=request.POST.get("price"),
+                barcode=request.POST.get("barcode") or None,
+                stock=int(request.POST.get("stock", 0)),
+                created_by=request.user,
+                updated_by=request.user,
+            )
+            product.save()
+            messages.success(request, f"Product '{product.name}' created successfully.")
+        except Exception as e:  # noqa: BLE001
+            messages.error(request, f"Error creating product: {e}")
+
+        return HttpResponseRedirect(reverse("inventory:product-list"))
+
+
 class ProductUpdateView(View):
     """View to handle product updates"""
 
