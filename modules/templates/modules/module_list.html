@@ -1,55 +1,182 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<style>
+  /* Neubrutalism styles with subtle rounded borders */
+  .neubrutalism-container {
+    padding: 2rem;
+    background-color: #f5f5f5;
+    border: 3px solid #000;
+    box-shadow: 8px 8px 0px #000;
+    border-radius: 8px;
+  }
+
+  .neubrutalism-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #000;
+    position: relative;
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #ffde59;
+    border: 3px solid #000;
+    box-shadow: 5px 5px 0px #000;
+    margin-bottom: 2rem;
+    border-radius: 6px;
+  }
+
+  .neubrutalism-card {
+    border: 3px solid #000 !important;
+    border-radius: 8px !important;
+    box-shadow: 8px 8px 0px #000;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-color: #fff;
+    overflow: hidden;
+  }
+
+  .neubrutalism-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 11px 11px 0px #000;
+  }
+
+  .neubrutalism-card-header {
+    border-bottom: 3px solid #000 !important;
+    border-radius: 5px 5px 0 0 !important;
+    padding: 1rem;
+  }
+
+  .card-body {
+    border-bottom: 3px solid #000;
+  }
+
+  .neubrutalism-active { background-color: #9bf8b3 !important; }
+  .neubrutalism-inactive { background-color: #ffafcc !important; }
+
+  .neubrutalism-badge {
+    border: 3px solid #000;
+    border-radius: 6px;
+    padding: 0.5rem 0.8rem;
+    font-weight: 700;
+    box-shadow: 3px 3px 0px #000;
+    display: inline-block;
+  }
+
+  .neubrutalism-badge-success { background-color: #39ff14; color: #000; }
+  .neubrutalism-badge-secondary { background-color: #d3d3d3; color: #000; }
+  .neubrutalism-badge-info { background-color: #58c7f3; color: #000; }
+
+  .neubrutalism-list-item {
+    border-bottom: 3px solid #000 !important;
+    padding: 0.8rem 1rem;
+  }
+
+  .list-group {
+    border-left: 3px solid #000;
+    border-right: 3px solid #000;
+  }
+
+  .neubrutalism-btn {
+    border: 3px solid #000;
+    border-radius: 6px;
+    box-shadow: 4px 4px 0px #000;
+    padding: 0.5rem 1rem;
+    font-weight: 700;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .neubrutalism-btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #000;
+  }
+
+  .neubrutalism-btn:active:not(:disabled) {
+    transform: translate(0px, 0px);
+    box-shadow: 0px 0px 0px #000;
+  }
+
+  .neubrutalism-btn-primary { background-color: #3c91e6; color: #000; }
+  .neubrutalism-btn-success { background-color: #39ff14; color: #000; }
+  .neubrutalism-btn-warning { background-color: #ffde59; color: #000; }
+  .neubrutalism-btn-danger { background-color: #ff5c5c; color: #000; }
+
+  .neubrutalism-footer {
+    background-color: #e9e9e9;
+    border-top: 3px solid #000;
+    padding: 1rem;
+    border-radius: 0 0 5px 5px;
+  }
+
+  .neubrutalism-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Border enhancements for empty state */
+  .alert.neubrutalism-card {
+    border: 3px solid #000 !important;
+    box-shadow: 8px 8px 0px #000;
+    border-radius: 8px !important;
+  }
+
+  /* Last list-item needs rounded corners to match card */
+  .list-group-item:last-child {
+    border-radius: 0 0 5px 5px;
+  }
+</style>
+{% endblock extra_css %}
+
 {% block content %}
-  <div class="container mt-4">
-    <h1 class="mb-4">Available Modules</h1>
+  <div class="container neubrutalism-container mt-4">
+    <h1 class="neubrutalism-title">Available Modules</h1>
     <div class="row">
       {% for module in modules %}
         <div class="col-md-6 col-lg-4 mb-4">
-          <div class="card h-100 {% if module.is_active %}border-success{% else %}border-secondary{% endif %}">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <h5 class="card-title mb-0 text-capitalize">{{ module.name }}</h5>
+          <div class="card h-100 neubrutalism-card">
+            <div class="card-header neubrutalism-card-header {% if module.is_active %}neubrutalism-active{% else %}neubrutalism-inactive{% endif %} d-flex justify-content-between align-items-center">
+              <h5 class="card-title mb-0 text-capitalize fw-bold">{{ module.name }}</h5>
               {% if module.is_active %}
-                <span class="badge bg-success">Active</span>
+                <span class="neubrutalism-badge neubrutalism-badge-success">Active</span>
               {% else %}
-                <span class="badge bg-secondary">Inactive</span>
+                <span class="neubrutalism-badge neubrutalism-badge-secondary">Inactive</span>
               {% endif %}
             </div>
             <div class="card-body">
               <p class="card-text">{{ module.description }}</p>
             </div>
             <ul class="list-group list-group-flush">
-              <li class="list-group-item">
-                <small class="text-muted">Created: {{ module.created_at|date:"M d, Y" }}</small>
+              <li class="list-group-item neubrutalism-list-item">
+                <small class="fw-bold">Created: {{ module.created_at|date:"M d, Y" }}</small>
               </li>
-              <li class="list-group-item">
-                <small class="text-muted">Updated: {{ module.updated_at|date:"M d, Y" }}</small>
+              <li class="list-group-item neubrutalism-list-item">
+                <small class="fw-bold">Updated: {{ module.updated_at|date:"M d, Y" }}</small>
               </li>
               {% if module.is_upgradable %}
-                <li class="list-group-item">
-                  <span class="badge bg-info">Upgradable</span>
+                <li class="list-group-item neubrutalism-list-item">
+                  <span class="neubrutalism-badge neubrutalism-badge-info">Upgradable</span>
                 </li>
               {% endif %}
             </ul>
-            <div class="card-footer text-center">
-              <a href="#" class="btn btn-primary btn-sm">Details</a>
+            <div class="card-footer text-center neubrutalism-footer">
+              <a href="#" class="btn neubrutalism-btn neubrutalism-btn-primary me-2">Details</a>
               <form method="post"
                     action="{% url 'modules:module-action' module.id %}"
                     style="display:inline">
                 {% csrf_token %}
                 {% if not module.is_active %}
                   <input type="hidden" name="action" value="activate" />
-                  <button type="submit" class="btn btn-success btn-sm">Install</button>
+                  <button type="submit" class="btn neubrutalism-btn neubrutalism-btn-success me-2">Install</button>
                 {% else %}
                   <!-- Always show upgrade button for active modules -->
                   <input type="hidden" name="action" value="upgrade" />
                   <button type="submit"
-                          class="btn btn-warning btn-sm"
+                          class="btn neubrutalism-btn neubrutalism-btn-warning me-2"
                           {% if not module.is_upgradable %}disabled{% endif %}>Upgrade</button>
                 {% endif %}
                 {% if module.is_active %}
                   <input type="hidden" name="action" value="deactivate" />
-                  <button type="submit" class="btn btn-danger btn-sm">Uninstall</button>
+                  <button type="submit" class="btn neubrutalism-btn neubrutalism-btn-danger">Uninstall</button>
                 {% endif %}
               </form>
             </div>
@@ -57,7 +184,9 @@
         </div>
       {% empty %}
         <div class="col-12">
-          <div class="alert alert-info">No modules available at this time.</div>
+          <div class="alert neubrutalism-card p-4" style="background-color: #ffe66d;">
+            <p class="mb-0 fw-bold">No modules available at this time.</p>
+          </div>
         </div>
       {% endfor %}
     </div>
