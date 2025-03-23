@@ -133,7 +133,9 @@
         document.getElementById('edit-stock').value = productStock;
 
         const editForm = document.getElementById('editProductForm');
-        editForm.action = editForm.action.replace(/\/0$/, '/' + productId);
+        // Update with more robust regex like the delete form
+        editForm.action = editForm.action.replace(/\/\d+\/?$/, '/' + productId + '/');
+        console.log("Edit form action updated to:", editForm.action);
       });
     }
 
@@ -150,7 +152,18 @@
         document.getElementById('delete-product-id').value = productId;
 
         const deleteForm = document.getElementById('deleteProductForm');
-        deleteForm.action = deleteForm.action.replace(/\/0$/, '/' + productId);
+
+        // Try multiple approaches to ensure the ID is replaced
+        if (deleteForm.action.includes('/0/')) {
+          // First try the simple replacement if there's a /0/ pattern
+          deleteForm.action = deleteForm.action.replace('/0/', '/' + productId + '/');
+        } else {
+          // Fall back to regex replacement
+          deleteForm.action = deleteForm.action.replace(/\/\d+\/?$/, '/' + productId + '/');
+        }
+
+        console.log("Delete form action updated to:", deleteForm.action);
+        console.log("Product ID for deletion:", productId);
       });
     }
   });
