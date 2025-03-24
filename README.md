@@ -95,3 +95,10 @@ pre-commit install
 ## License
 
 This project is licensed under the terms of the LICENSE file included in this repository.
+
+---
+
+## Todo:
+
+- Update form to Django Form Class
+- Adding Test to Inventory app
