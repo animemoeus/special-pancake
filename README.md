@@ -102,3 +102,5 @@ This project is licensed under the terms of the LICENSE file included in this re
 
 - Update form to Django Form Class
 - Adding Test to Inventory app
+- Add Product UoM
+- Add Product Category
